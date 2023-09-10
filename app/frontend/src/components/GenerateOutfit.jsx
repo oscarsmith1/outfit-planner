@@ -12,40 +12,6 @@ import shortsImg from '../images/pants/pants2.jpg'
 import axios from 'axios';
 const OutfitGenerator = async () => {
 
-  const axios = require('axios');
-
-  let fit = [
-    {
-      name:"Middle",
-      type: "Clothing",
-      options: ["Shirts & Tops"]
-    },
-    {
-      name:"Bottom",
-      type: "Clothing",
-      options: [
-				"Shorts",
-				"Swimwear",
-				"Pants",
-				"Jeans",
-				"Underwear"]
-    },
-    {
-      name:"Shoes",
-      type: "Shoes",
-      options: [
-        "Sneakers & Athletic",
-				"Sandals",
-				"Running Shoes",
-				"Oxfords",
-				"Loafers",
-				"Clogs",
-				"Boots",
-				"Wide"]
-    }
-  ]
-
-
   // State for selected items and weather
   const [selectedItems, setSelectedItems] = useState([]);
   const [weather, setWeather] = useState(null);
@@ -126,10 +92,6 @@ const OutfitGenerator = async () => {
     console.log(idealOutfit);
     
   };
-
-
-
-
   
   // Function to get random items from a Set
   const getRandomItems = (itemSet) => {
@@ -147,14 +109,47 @@ const OutfitGenerator = async () => {
 
 
   // ###### start of fetch coding ######
+
+  const axios = require('axios');
+
+  let fit = [
+    {
+      name:"Middle",
+      type: "Clothing",
+      options: ["Shirts & Tops"]
+    },
+    {
+      name:"Bottom",
+      type: "Clothing",
+      options: [
+				"Shorts",
+				"Swimwear",
+				"Pants",
+				"Jeans",
+				"Underwear"]
+    },
+    {
+      name:"Shoes",
+      type: "Shoes",
+      options: [
+        "Sneakers & Athletic",
+				"Sandals",
+				"Running Shoes",
+				"Oxfords",
+				"Loafers",
+				"Clogs",
+				"Boots",
+				"Wide"]
+    }
+  ]
   
   // presets = [[top][middle][bottom]]
   async function setTopMiddleBottom(presets) {
     let imageArray = []; // holds the image urls to be paced straight to html object
     for (let i = 0; i < 3; i++) {
       imageArray.push(callingListApi(i,presets[i]));
-      // each for loop end up saving
     }
+    return imageArray;
   }
 
   // takes in to parts position which is top middle bottom which is 0,1,2 and array [] options 
@@ -193,7 +188,7 @@ const OutfitGenerator = async () => {
       console.log(response.data);
     } catch (error) {
       console.error(error);
-      return [];
+      return ["https://www.freepnglogos.com/uploads/among-us-png/green-among-us-png-character-0.png"];
     }
 
     return randomSelect(mapToImages(response.data));
@@ -218,8 +213,6 @@ const OutfitGenerator = async () => {
     return newArray;
   }
   // ###### end of fetch coding ######
-
-
 
   return (
     <div className="flex justify-center h-screen w-full">
