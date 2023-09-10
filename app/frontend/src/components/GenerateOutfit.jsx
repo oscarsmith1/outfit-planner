@@ -12,82 +12,38 @@ import shortsImg from '../images/pants/pants2.jpg'
 import axios from 'axios';
 const OutfitGenerator = async () => {
 
-
-
-
-
-  let ClothingObject = [
-		{
-
-			name: "Clothing",
-			sub: ["Shirts & Tops",
-				"Shorts",
-				"Swimwear",
-				"Pants",
-				"Jeans",
-				"Underwear",
-				"Activewear"]
-		},
-
-		{
-
-			name: "Shoes",
-			sub: ["Sneakers & Athletic",
-				    "Sandals",
-				    "Running Shoes",
-				    "Oxfords",
-				    "Loafers",
-				    "Clogs",
-				    "Boots",
-				    "Wide"
-,]
-		}
-
-  ]
+  const axios = require('axios');
 
   let fit = [
     {
       name:"Middle",
-      options: [
-        ["Shoes","Sneakers & Athletic"],
-        ["Shoes","Sandals"],
-        ["Shoes","Running Shoes"],
-        ["Shoes","Oxfords"],
-        ["Shoes","Loafers"],
-        ["Shoes","Clogs"],
-        ["Shoes","Boots"],
-        ["Shoes","Wide"],
-      ]
+      type: "Clothing",
+      options: ["Shirts & Tops"]
     },
     {
       name:"Bottom",
+      type: "Clothing",
       options: [
-        ["Clothing",""],
-        ["Clothing",""],
-        ["Clothing",""],
-        ["Clothing",""],
-        ["Clothing",""]
-      ]
+				"Shorts",
+				"Swimwear",
+				"Pants",
+				"Jeans",
+				"Underwear"]
     },
     {
       name:"Shoes",
+      type: "Shoes",
       options: [
-        ["Shoes","Sneakers & Athletic"],
-        ["Shoes","Sandals"],
-        ["Shoes","Running Shoes"],
-        ["Shoes","Oxfords"],
-        ["Shoes","Loafers"],
-        ["Shoes","Clogs"],
-        ["Shoes","Boots"],
-        ["Shoes","Wide"],
-      ]
+        "Sneakers & Athletic",
+				"Sandals",
+				"Running Shoes",
+				"Oxfords",
+				"Loafers",
+				"Clogs",
+				"Boots",
+				"Wide"]
     }
   ]
-  
-
- 
-
- 
 
 
   // State for selected items and weather
@@ -172,7 +128,7 @@ const OutfitGenerator = async () => {
   };
 
 
-  const axios = require('axios');
+
 
   
   // Function to get random items from a Set
@@ -190,36 +146,44 @@ const OutfitGenerator = async () => {
   };
 
 
-  async function arrayGet(optionsArray) {
-    const axios = require('axios');
+  // ###### start of fetch coding ######
+  
+  // presets = [[top][middle][bottom]]
+  async function setTopMiddleBottom(presets) {
+    let imageArray = []; // holds the image urls to be paced straight to html object
+    for (let i = 0; i < 3; i++) {
+      imageArray.push(callingListApi(i,presets[i]));
+      // each for loop end up saving
+    }
+  }
 
+  // takes in to parts position which is top middle bottom which is 0,1,2 and array [] options 
+  async function callingListApi(position,options) {
     const options = {
       method: 'POST',
       url: 'https://zappos1.p.rapidapi.com/products/list',
       params: {
         page: '1',
-        limit: '100',
+        limit: '50',
         sort: 'relevance/desc'
       },
       headers: {
         'content-type': 'application/json',
-        'X-RapidAPI-Key': 'fefc42817bmshae46748d4188e19p1f133ejsn9ba26ec46429',
+        'X-RapidAPI-Key': '31b7cc45b3mshbdc7747cb8edda3p15254ejsn15b8c6d04f38',
         'X-RapidAPI-Host': 'zappos1.p.rapidapi.com'
       },
       data: [
         {
           facetField: 'zc1',
-          values: [optionsArray[0]]
+          values: [fit[position].type]
         },
         {
           facetField: 'zc2',
-          values: [
-            optionsArray[1]
-          ]
+          values: reduceArray(fit[position].options,options)
         },
         {
           facetField: 'txAttrFacet_Gender',
-          values: ['Women', 'Girls']
+          values: ['Men']
         }
       ]
     };
@@ -229,9 +193,31 @@ const OutfitGenerator = async () => {
       console.log(response.data);
     } catch (error) {
       console.error(error);
+      return [];
     }
+
+    return randomSelect(mapToImages(response.data));
   }
-  
+
+  function mapToImages(dataObject) {
+    resultArray = dataObject.results;
+    return resultsArray.map((item) => {
+      return "https://www.zappos.com" + item.productUrl;
+    }) 
+  }
+
+  function randomSelect(array) {
+    return array[Math.floor(Math.random() * array.length)];
+  }
+
+  function reduceArray(array,indexes) {
+    let newArray = []
+    for (let i = 0; i < indexes.length; i++) {
+      newArray.push(array[indexes[i]])
+    }
+    return newArray;
+  }
+  // ###### end of fetch coding ######
 
 
 
